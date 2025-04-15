@@ -25,7 +25,7 @@ kafka_stream = spark.readStream \
     .option("startingOffsets", "latest") \
     .load()
 
-log_pattern = r'''(?P<ip>\d+\.\d+\.\d+\.\d+) - (?P<user_id>\d+) \[(?P<timestamp>[^\]]+)\] (?P<method>GET|POST) (?P<filename>\S+) (?P<status>\d{3}) (?P<size>\d+)'''
+log_pattern = r'(\d+\.\d+\.\d+\.\d+) - (\d+) \[([^\]]+)\] (GET|POST) (\S+) (\d{3}) (\d+)'
 
 logs_df = kafka_stream.selectExpr("CAST(value AS STRING) as raw_log") \
     .select(
@@ -52,6 +52,24 @@ logs_with_flags = logs_with_window \
     .withColumn("status_flag", when(col("status_code") == 200, "success").otherwise("fail"))
 
 result_df = logs_with_flags.groupBy("window","operation", "status_flag").count()
+
+# debug_df = kafka_stream.selectExpr("CAST(value AS STRING) as raw_log") \
+#     .select(
+#         col("raw_log"),
+#         regexp_extract("raw_log", log_pattern, 1).alias("ip"),
+#         regexp_extract("raw_log", log_pattern, 2).alias("user_id"),
+#         regexp_extract("raw_log", log_pattern, 3).alias("timestamp"),
+#         regexp_extract("raw_log", log_pattern, 4).alias("method"),
+#         regexp_extract("raw_log", log_pattern, 5).alias("filename"),
+#         regexp_extract("raw_log", log_pattern, 6).alias("status_code"),
+#         regexp_extract("raw_log", log_pattern, 7).alias("size")
+#     )
+
+# debug_query = debug_df.writeStream \
+#     .outputMode("append") \
+#     .format("console") \
+#     .option("truncate", False) \
+#     .start()
 
 
 spark.sparkContext._jsc.hadoopConfiguration().set("dfs.client.use.datanode.hostname", "true")
