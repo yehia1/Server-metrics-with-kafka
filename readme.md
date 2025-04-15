@@ -103,7 +103,6 @@ mvn exec:java -Dexec.mainClass="com.monitoring.device.App"
 - Verified topic with Kafka console tools
 - Debugged JSON format with escaped strings using regular expressions
 
-# Cloud Monitoring Project - Documentation
 
 ## Phase 4 – Docker Environment Setup
 
