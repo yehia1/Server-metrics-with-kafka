@@ -1,0 +1,24 @@
+docker exec spark-master spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.2 --master spark://spark-master:7077 /opt/spark-apps/logs_processor.py
+
+
+mvn clean compile exec:java
+
+/usr/bin/kafka-topics --bootstrap-server broker1:29092 --create --topic loadbalancer-logs --partitions 3 --replication-factor 1
+/usr/bin/kafka-topics --bootstrap-server broker1:29092 --list
+
+
+docker exec -it broker1 kafka-console-producer --broker-list broker1:9092 --topic loadbalancer-logs
+
+kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic loadbalancer-logs --from-beginning
+
+docker exec -it mysql bash
+docker cp Schema.sql mysql:/Schema.sql 
+
+docker exec namenode hdfs dfs -mkdir -p /user/hadoop/logs_output
+docker exec namenode hdfs dfs -chmod 777 /user/hadoop/logs_output
+docker exec namenode hdfs dfs -mkdir -p /user/hadoop/checkpoints
+docker exec namenode hdfs dfs -chmod 777 /user/hadoop/checkpoints 
+
+hdfs dfs -mkdir -p /user/spark/logs_output
+hdfs dfs -mkdir -p /user/spark/checkpoints
+hdfs dfs -chown -R spark:spark /user/spark
