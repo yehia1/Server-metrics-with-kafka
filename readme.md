@@ -9,15 +9,6 @@ After that, you need to build a consumers - in whatever language you would prefe
 ## Resources:
 Java program to simulate the agents. You just need to install maven on your system and then run ```mvn exec:java``` to run the program
 
-## Requirements:
-1. Create the topics in the kafka cluster
-2. Write consumer for the metrics
-3. Write Spark application for logs
-
-## Key Deliverables:
--	A document with the configuration of each broker and topic
--	Code for consumer and Spark application
-
 # Steps
 ---
 
