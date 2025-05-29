@@ -1,5 +1,4 @@
-docker exec spark-master spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.2 --master spark://spark-master:7077 /opt/spark-apps/logs_processor.py
-
+docker exec spark-master spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.2 --master spark://spark-master:7077 /opt/spark-app-code/logs_processor.py
 
 mvn clean compile exec:java
 
